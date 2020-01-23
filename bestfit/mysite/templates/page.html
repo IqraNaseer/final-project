@@ -1,0 +1,64 @@
+{% extends 'General_knowledge.html' %}
+
+{% block content%}
+
+<form action="/" method="post">
+  {% for test in Test %}
+  {% if forloop.counter <= length %}
+  <div class="row">
+    <div class="col-md-10">
+      <input type="radio" name="{{test.id}}" hidden>
+        <h4>{{ forloop.counter }}. {{ test.question }}</h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-3">
+      <p>This question belongs to this category : <b>{{ test.category }}</b></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-3">
+      <h4>
+      <input type="radio" name="{{ test.id }}" value="{{ test.option_1 }}">
+      {{ test.option_1 }}
+    </h4>
+    </div>
+    <div class="col-md-3">
+      <h4>
+      <input type="radio" name="{{ test.id }}" value="{{ test.option_2 }}">
+      {{ test.option_2 }}
+    </h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-3">
+      <h4>
+      <input type="radio" name="{{ test.id }}" value="{{ test.option_3 }}">
+      {{ test.option_3 }}
+    </h4>
+    </div>
+    <div class="col-md-3">
+      <h4>
+      <input class="form_control" type="radio" name="{{ test.id }}" value="{{ test.option_4 }}">
+      {{ test.option_4 }}
+    </h4>
+    </div>
+    <a class="btn btn-success" onclick="{{ test|add:1}}">Next</a>
+  </div>
+  {% endif %}
+  {% endfor %}
+  {% csrf_token %}
+  <br>
+  <div class="row">
+    <div class="col-md-1">
+    </div>
+    <div class="col-xs-2">
+      <a type="submit" class="btn btn-suucess btn btn-disabled " aria-disabled="true">Result</a>
+    </div>
+  </div>
+</form>
+
+{% endblock %}

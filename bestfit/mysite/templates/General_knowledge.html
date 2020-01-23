@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<span id = "timer" style="float: right;">
+</span>
+<form action="/result/" method="post" class="demoForm">{% csrf_token %}
+{% for test in Test %}
+
+
+  <div class="row">
+    <div class="col-md-10">
+      <input type="radio" name="{{test.id}}" id="{{test.id}}" hidden>
+        <h4>{{ test.id }}. {{ test.question }}</h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-3">
+      <p>This question belongs to this category : <b>{{ test.category }}</b></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-3">
+      <h4>
+      <input type="radio" class="option" name="{{test.id}}" value="{{ test.option_1 }}">
+      {{ test.option_1 }}
+    </h4>
+    </div>
+    <div class="col-md-3">
+      <h4>
+      <input type="radio" class="option" name="{{test.id}}" value="{{ test.option_2 }}">
+      {{ test.option_2 }}
+    </h4>
+    </div>
+  </div>
+  <div class="row" id="rowdiv">
+    <div class="col-md-1"></div>
+    <div class="col-md-3">
+      <h4>
+      <input type="radio" class="option" name="{{test.id}}" value="{{ test.option_3 }}">
+      {{ test.option_3 }}
+    </h4>
+    </div>
+    <div class="col-md-3">
+      <h4>
+      <input class="form_control" class="option" type="radio" name="{{test.id}}" value="{{ test.option_4 }}">
+      {{ test.option_4 }}
+    </h4>
+  <br>
+    {% if test.id == length  %}
+    <a class="btn btn-success disabled" id="next" href="/test/{{test.id|add:1}}" >Next</a>
+    {% else %} 
+    <a class="btn btn-success external" id="next" href="/test/{{test.id|add:1}}" onclick="answertime({{test.id}})">Next</a>
+    {% endif %}
+
+    {% if test.id == 1  %} 
+<button class="btn btn-success mx-3" disabled >Previous</button>
+{% else %}
+  <a href="/test/{{ test.id|add:-1}}" class="btn btn-success mx-2" style="color:aliceblue;">Previous</a>
+    
+    {% endif %}
+  <br>
+  <br>
+  <div class="row">
+    <div class="col-md-1">
+    </div>
+    <div class="col-xs-2">
+      {% if test.id == length %}
+      <button type="submit" class="btn btn-success" onclick="savetimmer()">Result</button>
+      {% else %}
+      <button type="submit" class="btn btn-success" id="result" disabled>Result</button>
+      {% endif %} 
+    </div>
+  </div>
+</div>
+{% endfor %}
+  
+ 
+</form>
+{% endblock %}
+{% block js %}
+<script type ="text/javascript">
+
+
+var local,anstime,clock,counter=0,timetaken=0,i
+  clock = setInterval(timeclock,1000);
+
+  function timeclock(){
+      var d = new Date();
+      local = d.toLocaleTimeString();
+      document.getElementById('timer').innerHTML = local;
+      counter++;
+      if(counter==3600){
+          alert('timeout');
+          clearInterval(clock);
+      }
+  }
+  function savetimmer(){
+      clearInterval(clock);
+      localStorage.clear();
+      console.log(time);
+  }
+
+  
+  var ans = setInterval(ansclock,1000);
+
+  function ansclock(){
+      var a = new Date();
+      anstime = a.toLocaleTimeString();
+      timetaken++;
+      if(timetaken == 300){
+          clearInterval(ans);
+          timetaken = 0;
+          ans = setInterval(ansclock,1000);
+          //alert('you are wated too much time in this question')
+      }
+  }
+  function convertSecond(s){
+  var min = Math.floor(s/60);
+  var sec = s % 60;
+  var r = min +":" + sec;
+  return r;
+}
+var mytime = [],sz,ele,useranswer;
+
+  function answertime(id){
+    atime = convertSecond(timetaken);
+    useranswer = document.getElementsByClassName('option');
+
+for (var i=0, len=useranswer.length; i<len; i++) {
+  if(useranswer[i].checked)
+    ele = useranswer[i].value;
+}
+     console.log(ele);
+      localStorage.setItem('time', atime);
+      localStorage.setItem('questionId', id );
+      
+      //timet[i] = timet.push(atime);
+      //i = i + 1;
+      //console.log(myJSON);
+      clearInterval(ans);
+      timetaken = 0;
+      anstime = setInterval(ansclock,1000);
+  }
+
+console.log(localStorage.getItem('time'));
+console.log(localStorage.getItem('questionId'));
+console.log(localStorage.getItem('Answer'));
+
+//   jQuery('a.external').on('click', function(event){
+//     event.preventDefault();
+//     var href = jQuery(this).attr('href');
+//     setTimeout(function(){
+//         window.location = href;
+//     }, 3000);
+
+
+//  });
+
+
+
+</script>
+{% endblock %}
